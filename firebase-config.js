@@ -1,5 +1,5 @@
 // ============================================================
-// PRIMILM — Firebase configuration
+// primilm-backend/firebase-config.js
 // ============================================================
 // 1. Go to https://console.firebase.google.com
 // 2. Create a new project called "Primilm" (or reuse an existing one)
