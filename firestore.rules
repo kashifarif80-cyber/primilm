@@ -1,0 +1,71 @@
+rules_version = '2';
+
+// ============================================================
+// PRIMILM — Firestore Security Rules
+// ============================================================
+// This is the REAL enforcement layer. Anything checked only in your
+// frontend JS (like isCurrentUserAdmin() in auth.js) is just for showing
+// or hiding buttons — a technical user can bypass frontend checks entirely.
+// These rules are what actually stops someone from reading or writing
+// data they shouldn't, no matter what they do in the browser.
+//
+// After deploying, run: firebase deploy --only firestore:rules
+// ============================================================
+
+function isAdmin() {
+  return exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+}
+
+function isSignedIn() {
+  return request.auth != null;
+}
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ---------------- CREATORS ----------------
+    // A creator can only read/write their OWN profile doc.
+    // Admins can read (for support/moderation) but writes stay
+    // creator-only to avoid you accidentally corrupting their store.
+    match /creators/{creatorId} {
+      allow read: if isSignedIn() && (request.auth.uid == creatorId || isAdmin());
+      allow write: if isSignedIn() && request.auth.uid == creatorId;
+
+      // Products live under each creator, same ownership rule,
+      // but PUBLISHED products are publicly readable so buyers
+      // and the storefront page can display them without login.
+      match /products/{productId} {
+        allow read: if resource.data.published == true || (isSignedIn() && request.auth.uid == creatorId);
+        allow write: if isSignedIn() && request.auth.uid == creatorId;
+      }
+    }
+
+    // ---------------- BUYERS ----------------
+    // A buyer can only read/write their own lightweight record
+    // (purchase history, email). They never see other buyers' data.
+    match /buyers/{buyerId} {
+      allow read, write: if isSignedIn() && request.auth.uid == buyerId;
+    }
+
+    // ---------------- ADMINS ----------------
+    // Nobody can read or write the admins collection from the client —
+    // not even signed-in admins. You add admin UIDs manually from the
+    // Firebase Console (Firestore tab) or via a trusted server script,
+    // never through client-side app code. This is deliberate: it means
+    // there is no code path in the app that could ever grant someone
+    // admin access, even if your frontend code had a bug.
+    match /admins/{adminId} {
+      allow read, write: if false;
+    }
+
+    // ---------------- SUBSCRIPTIONS / BILLING ----------------
+    // Only readable by the creator it belongs to and admins.
+    // Never writable directly by the client — this must only be
+    // written by a server-side function reacting to a real payment
+    // webhook (Stripe/etc). Never trust the client to say "I paid."
+    match /subscriptions/{creatorId} {
+      allow read: if isSignedIn() && (request.auth.uid == creatorId || isAdmin());
+      allow write: if false;
+    }
+  }
+}

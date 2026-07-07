@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Primilm — Dashboard</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap');
+
+:root{
+  --ink:#11142A; --ink-2:#1B1F3C; --ink-3:#262B52;
+  --gold:#E3A857; --gold-soft:#F2C98A;
+  --paper:#F6F1E7; --paper-dim:#D8D3E0; --muted:#8C90B8;
+  --line: rgba(227,168,87,0.16);
+  --good:#6FCF97; --bad:#E37E7E;
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+body{ background:var(--ink); color:var(--paper); font-family:'Inter',sans-serif; display:flex; min-height:100vh;}
+h1,h2,h3{ font-family:'Fraunces',serif; font-weight:600; letter-spacing:-0.01em; }
+.eyebrow{ font-family:'IBM Plex Mono',monospace; font-size:0.7rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--gold); }
+
+/* Sidebar */
+.sidebar{
+  width:230px; background:var(--ink-2); border-right:1px solid var(--line);
+  padding:24px 16px; display:flex; flex-direction:column; flex-shrink:0;
+}
+.logo{ display:flex; align-items:center; gap:8px; font-family:'Fraunces',serif; font-weight:600; font-size:1.15rem; padding:0 10px 26px; }
+.nav-item{
+  display:flex; align-items:center; gap:12px; padding:11px 14px; border-radius:10px;
+  font-size:0.9rem; color:var(--paper-dim); cursor:pointer; margin-bottom:2px; transition:all .15s ease;
+}
+.nav-item:hover{ background:var(--ink-3); color:var(--paper); }
+.nav-item.active{ background: rgba(227,168,87,0.12); color:var(--gold-soft); font-weight:600; }
+.nav-item .ic{ font-size:1.05rem; width:20px; text-align:center; }
+.sidebar-foot{ margin-top:auto; padding:14px 10px; border-top:1px solid var(--line); font-size:0.78rem; color:var(--muted); }
+.status-pill{ display:inline-flex; align-items:center; gap:6px; background:rgba(111,207,151,0.12); color:var(--good); padding:5px 10px; border-radius:999px; font-size:0.75rem; font-weight:600; margin-top:8px; }
+.status-pill.draft{ background:rgba(227,168,87,0.12); color:var(--gold); }
+
+/* Main */
+.main{ flex:1; padding:34px 40px; overflow-y:auto; }
+.topline{ display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:30px; }
+.topline h1{ font-size:1.7rem; }
+.topline p{ color:var(--muted); font-size:0.9rem; margin-top:4px; }
+.btn{
+  display:inline-flex; align-items:center; gap:8px; padding:11px 20px; border-radius:999px;
+  font-size:0.88rem; font-weight:600; cursor:pointer; border:1px solid transparent; transition:transform .15s ease;
+}
+.btn:hover{ transform:translateY(-1px); }
+.btn-gold{ background:linear-gradient(180deg,var(--gold-soft),var(--gold)); color:#1B1200; }
+.btn-ghost{ border-color:var(--line); color:var(--paper); background:transparent; }
+
+/* Stats row */
+.stats{ display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:30px; }
+.stat-card{ background:var(--ink-2); border:1px solid var(--line); border-radius:14px; padding:20px; }
+.stat-card .lbl{ font-size:0.78rem; color:var(--muted); margin-bottom:10px; }
+.stat-card .val{ font-family:'Fraunces',serif; font-size:1.65rem; font-weight:600; }
+.stat-card .delta{ font-size:0.78rem; margin-top:6px; color:var(--good); }
+.stat-card .delta.down{ color:var(--bad); }
+
+/* Panels */
+.panel{ background:var(--ink-2); border:1px solid var(--line); border-radius:14px; padding:24px; margin-bottom:20px; }
+.panel-head{ display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; }
+.panel-head h3{ font-size:1.05rem; }
+.panel-head a{ font-size:0.82rem; color:var(--gold); cursor:pointer; }
+
+/* Product rows */
+.prod-row{ display:flex; align-items:center; justify-content:space-between; padding:13px 0; border-top:1px solid var(--line); }
+.prod-row:first-child{ border-top:none; }
+.prod-info{ display:flex; align-items:center; gap:12px; }
+.prod-thumb{ width:40px; height:40px; border-radius:9px; background:linear-gradient(145deg,var(--gold-soft),var(--gold)); display:flex; align-items:center; justify-content:center; font-size:1.1rem; }
+.prod-name{ font-size:0.92rem; font-weight:600; }
+.prod-type{ font-size:0.76rem; color:var(--muted); }
+.prod-sales{ font-size:0.85rem; color:var(--paper-dim); }
+.prod-price{ font-weight:700; font-size:0.92rem; min-width:60px; text-align:right; }
+
+/* Two-column layout */
+.grid-2{ display:grid; grid-template-columns:1.4fr 1fr; gap:20px; }
+
+/* Simple bar chart */
+.chart{ display:flex; align-items:flex-end; gap:8px; height:120px; margin-top:6px; }
+.chart .bar{ flex:1; background:linear-gradient(180deg,var(--gold-soft),var(--gold)); border-radius:5px 5px 0 0; opacity:0.85; }
+.chart-labels{ display:flex; gap:8px; margin-top:8px; }
+.chart-labels span{ flex:1; text-align:center; font-size:0.7rem; color:var(--muted); }
+
+.empty{ text-align:center; padding:36px 10px; color:var(--muted); font-size:0.88rem; }
+</style>
+</head>
+<body>
+
+<div class="sidebar">
+  <div class="logo">
+    <svg width="24" height="24" viewBox="0 0 30 30" fill="none"><path d="M15 2C15 2 8 9 8 16C8 20.4183 11.134 24 15 24C18.866 24 22 20.4183 22 16C22 9 15 2 15 2Z" fill="#E3A857"/><rect x="13.2" y="24" width="3.6" height="4" rx="1.5" fill="#8A6A2E"/></svg>
+    Primilm
+  </div>
+  <div class="nav-item active"><span class="ic">🏠</span>Dashboard</div>
+  <div class="nav-item"><span class="ic">📦</span>Products</div>
+  <div class="nav-item"><span class="ic">🎓</span>Courses</div>
+  <div class="nav-item"><span class="ic">📅</span>Bookings</div>
+  <div class="nav-item"><span class="ic">👥</span>Students / Clients</div>
+  <div class="nav-item"><span class="ic">💰</span>Earnings</div>
+  <div class="nav-item"><span class="ic">📈</span>Analytics</div>
+  <div class="nav-item"><span class="ic">📧</span>Email List</div>
+  <div class="nav-item"><span class="ic">🤖</span>AI Assistant</div>
+  <div class="nav-item"><span class="ic">⚙️</span>Settings</div>
+  <div class="sidebar-foot">
+    primilm.com/kashifacademy
+    <div class="status-pill draft">● Draft — not published</div>
+  </div>
+</div>
+
+<div class="main">
+  <div class="topline">
+    <div>
+      <h1>Welcome back, Kashif</h1>
+      <p>Here's how Kashif Academy is doing.</p>
+    </div>
+    <div style="display:flex; gap:10px;">
+      <button class="btn btn-ghost">View store</button>
+      <button class="btn btn-gold">Publish store</button>
+    </div>
+  </div>
+
+  <div class="stats">
+    <div class="stat-card">
+      <div class="lbl">Total earnings</div>
+      <div class="val">$0.00</div>
+      <div class="delta">Publish to start earning</div>
+    </div>
+    <div class="stat-card">
+      <div class="lbl">Store visitors</div>
+      <div class="val">0</div>
+      <div class="delta" style="color:var(--muted);">No traffic yet</div>
+    </div>
+    <div class="stat-card">
+      <div class="lbl">Products</div>
+      <div class="val">2</div>
+      <div class="delta" style="color:var(--muted);">Draft</div>
+    </div>
+    <div class="stat-card">
+      <div class="lbl">Conversion rate</div>
+      <div class="val">—</div>
+      <div class="delta" style="color:var(--muted);">Not enough data</div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div>
+      <div class="panel">
+        <div class="panel-head">
+          <h3>Your products</h3>
+          <a>+ Add product</a>
+        </div>
+        <div class="prod-row">
+          <div class="prod-info">
+            <div class="prod-thumb">📚</div>
+            <div>
+              <div class="prod-name">English Grammar Mastery</div>
+              <div class="prod-type">Course · Draft</div>
+            </div>
+          </div>
+          <div class="prod-sales">0 sales</div>
+          <div class="prod-price">$29</div>
+        </div>
+        <div class="prod-row">
+          <div class="prod-info">
+            <div class="prod-thumb">🗣️</div>
+            <div>
+              <div class="prod-name">1:1 Consultation Call</div>
+              <div class="prod-type">Booking · Draft</div>
+            </div>
+          </div>
+          <div class="prod-sales">0 sales</div>
+          <div class="prod-price">$25</div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <h3>Revenue — last 7 days</h3>
+          <a>View analytics</a>
+        </div>
+        <div class="chart">
+          <div class="bar" style="height:4%;"></div>
+          <div class="bar" style="height:4%;"></div>
+          <div class="bar" style="height:4%;"></div>
+          <div class="bar" style="height:4%;"></div>
+          <div class="bar" style="height:4%;"></div>
+          <div class="bar" style="height:4%;"></div>
+          <div class="bar" style="height:4%;"></div>
+        </div>
+        <div class="chart-labels">
+          <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
+        </div>
+        <div class="empty">No sales yet — publish your store to start tracking revenue.</div>
+      </div>
+    </div>
+
+    <div>
+      <div class="panel">
+        <div class="panel-head"><h3>Setup checklist</h3></div>
+        <div class="prod-row"><div class="prod-info"><span>✅</span><div class="prod-name">Store details added</div></div></div>
+        <div class="prod-row"><div class="prod-info"><span>✅</span><div class="prod-name">Payment method connected</div></div></div>
+        <div class="prod-row"><div class="prod-info"><span>✅</span><div class="prod-name">Theme selected</div></div></div>
+        <div class="prod-row"><div class="prod-info"><span>⬜</span><div class="prod-name">Add your first product</div></div></div>
+        <div class="prod-row"><div class="prod-info"><span>⬜</span><div class="prod-name">Publish your store</div></div></div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head"><h3>AI Assistant</h3></div>
+        <p style="color:var(--paper-dim); font-size:0.88rem; margin-bottom:14px;">Describe what you want to sell — get a sales page, outline, and captions instantly.</p>
+        <div style="background:var(--ink-3); border-radius:10px; padding:12px; font-size:0.85rem; color:var(--muted);">
+          "I want to sell my English Grammar Course" →
+        </div>
+        <button class="btn btn-gold" style="width:100%; margin-top:14px; justify-content:center;">✨ Try AI Assistant</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

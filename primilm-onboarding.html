@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Primilm — Build your store</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap');
+
+:root{
+  --ink: #11142A;
+  --ink-2: #1B1F3C;
+  --ink-3: #262B52;
+  --gold: #E3A857;
+  --gold-soft: #F2C98A;
+  --paper: #F6F1E7;
+  --paper-dim: #D8D3E0;
+  --muted: #8C90B8;
+  --line: rgba(227,168,87,0.18);
+  --radius: 14px;
+  --good: #6FCF97;
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+body{
+  background: var(--ink);
+  color: var(--paper);
+  font-family:'Inter', sans-serif;
+  min-height:100vh;
+}
+h1,h2,h3{ font-family:'Fraunces', serif; font-weight:600; letter-spacing:-0.01em; }
+input, select{
+  font-family:'Inter', sans-serif;
+  background: var(--ink-2);
+  border:1px solid var(--line);
+  color: var(--paper);
+  border-radius:10px;
+  padding:13px 16px;
+  font-size:0.95rem;
+  width:100%;
+  outline:none;
+  transition: border-color .15s ease;
+}
+input:focus, select:focus{ border-color:var(--gold); }
+input::placeholder{ color:var(--muted); }
+label{ font-size:0.85rem; color:var(--paper-dim); margin-bottom:8px; display:block; font-weight:500; }
+
+.eyebrow{
+  font-family:'IBM Plex Mono', monospace;
+  font-size:0.72rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--gold);
+}
+.btn{
+  display:inline-flex; align-items:center; justify-content:center; gap:8px;
+  padding:13px 26px; border-radius:999px;
+  font-size:0.92rem; font-weight:600; cursor:pointer; border:1px solid transparent;
+  transition: transform .15s ease, box-shadow .15s ease; font-family:'Inter',sans-serif;
+}
+.btn:hover{ transform: translateY(-1px); }
+.btn-gold{ background: linear-gradient(180deg,var(--gold-soft),var(--gold)); color:#1B1200; }
+.btn-gold:hover{ box-shadow: 0 8px 24px rgba(227,168,87,0.35); }
+.btn-ghost{ border-color: var(--line); color:var(--paper); background:transparent; }
+.btn-ghost:hover{ border-color: var(--gold); }
+.btn:disabled{ opacity:0.4; cursor:not-allowed; transform:none; box-shadow:none; }
+
+/* Top bar */
+.topbar{
+  display:flex; align-items:center; justify-content:space-between;
+  padding:22px 32px; border-bottom:1px solid var(--line);
+}
+.logo{ display:flex; align-items:center; gap:8px; font-family:'Fraunces',serif; font-weight:600; font-size:1.2rem; }
+.progress-wrap{ flex:1; max-width:420px; margin:0 40px; }
+.progress-bar{ height:5px; background:var(--ink-2); border-radius:99px; overflow:hidden; }
+.progress-fill{ height:100%; background: linear-gradient(90deg,var(--gold-soft),var(--gold)); border-radius:99px; transition: width .35s ease; width:8%; }
+.progress-label{ font-size:0.78rem; color:var(--muted); margin-top:8px; font-family:'IBM Plex Mono',monospace; }
+.exit{ font-size:0.85rem; color:var(--muted); cursor:pointer; }
+.exit:hover{ color:var(--paper); }
+
+/* Stage container */
+.stage{
+  max-width:640px; margin:0 auto; padding:70px 32px 120px;
+  min-height:60vh;
+}
+.step{ display:none; animation: fade .4s ease; }
+.step.active{ display:block; }
+@keyframes fade{ from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:none;} }
+.step h2{ font-size:1.9rem; margin-bottom:10px; }
+.step > p.desc{ color:var(--paper-dim); margin-bottom:36px; font-size:1rem; }
+
+/* Role grid */
+.role-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
+.role-opt{
+  background: var(--ink-2); border:1.5px solid var(--line); border-radius:12px;
+  padding:20px 14px; text-align:center; cursor:pointer;
+  transition: all .15s ease;
+}
+.role-opt .em{ font-size:1.6rem; display:block; margin-bottom:8px; }
+.role-opt .lbl{ font-size:0.85rem; font-weight:600; }
+.role-opt:hover{ border-color:var(--gold); }
+.role-opt.sel{ border-color:var(--gold); background: rgba(227,168,87,0.10); box-shadow:0 0 0 1px var(--gold) inset; }
+@media(max-width:640px){ .role-grid{ grid-template-columns:repeat(2,1fr); } }
+
+/* Field group */
+.field{ margin-bottom:22px; }
+
+/* Payment grid */
+.pay-grid{ display:grid; grid-template-columns:repeat(2,1fr); gap:12px; }
+.pay-opt{
+  display:flex; align-items:center; gap:12px;
+  background: var(--ink-2); border:1.5px solid var(--line); border-radius:12px;
+  padding:16px; cursor:pointer; transition:all .15s ease;
+}
+.pay-opt:hover{ border-color:var(--gold); }
+.pay-opt.sel{ border-color:var(--gold); background: rgba(227,168,87,0.10); }
+.pay-opt .pem{ font-size:1.3rem; }
+.pay-opt .plbl{ font-weight:600; font-size:0.92rem; }
+.pay-opt .psub{ font-size:0.76rem; color:var(--muted); }
+.pay-region{ font-size:0.8rem; color:var(--gold); margin:22px 0 12px; font-family:'IBM Plex Mono',monospace; letter-spacing:0.06em; text-transform:uppercase;}
+
+/* Theme grid */
+.theme-grid{ display:grid; grid-template-columns:repeat(2,1fr); gap:14px; }
+.theme-opt{ cursor:pointer; border:1.5px solid var(--line); border-radius:12px; overflow:hidden; transition: border-color .15s ease; }
+.theme-opt:hover{ border-color:var(--gold); }
+.theme-opt.sel{ border-color:var(--gold); box-shadow:0 0 0 1px var(--gold) inset; }
+.theme-preview{ height:110px; padding:14px; }
+.theme-preview .bar{ height:8px; border-radius:4px; margin-bottom:8px; width:60%; }
+.theme-preview .line{ height:5px; border-radius:3px; margin-bottom:6px; }
+.theme-name{ padding:10px 14px; font-size:0.85rem; font-weight:600; background:var(--ink-2); }
+.t-modern .theme-preview{ background:#1B1F3C; } .t-modern .bar{background:var(--gold);} .t-modern .line{background:#3A4070; width:80%;}
+.t-elegant .theme-preview{ background:#2A1F1A; } .t-elegant .bar{background:#D9B98C;} .t-elegant .line{background:#4A3B30; width:70%;}
+.t-minimal .theme-preview{ background:#F6F1E7; } .t-minimal .bar{background:#1B1200;} .t-minimal .line{background:#D8D3E0; width:75%;}
+.t-professional .theme-preview{ background:#182430; } .t-professional .bar{background:#7EC8E3;} .t-professional .line{background:#324658; width:65%;}
+
+/* URL step */
+.url-box{ display:flex; align-items:stretch; border:1.5px solid var(--line); border-radius:10px; overflow:hidden; }
+.url-prefix{ background:var(--ink-3); padding:13px 14px; font-size:0.9rem; color:var(--muted); font-family:'IBM Plex Mono',monospace; display:flex; align-items:center; }
+.url-box input{ border:none; border-radius:0; }
+.url-status{ margin-top:12px; font-size:0.87rem; display:flex; align-items:center; gap:8px; min-height:20px; }
+.url-status.ok{ color:var(--good); }
+.url-status.bad{ color:#E37E7E; }
+
+/* Nav buttons */
+.stage-nav{ display:flex; justify-content:space-between; margin-top:44px; }
+
+/* Publish / final */
+.publish-card{ background:var(--ink-2); border:1px solid var(--line); border-radius:16px; padding:30px; text-align:center; margin-bottom:26px; }
+.publish-card .storeurl{ font-family:'IBM Plex Mono',monospace; color:var(--gold); font-size:1.05rem; margin-top:6px; }
+.price-toggle{ display:flex; gap:10px; margin-bottom:26px; }
+.plan-card{ flex:1; border:1.5px solid var(--line); border-radius:12px; padding:22px; cursor:pointer; transition:all .15s ease; }
+.plan-card:hover{ border-color:var(--gold); }
+.plan-card.sel{ border-color:var(--gold); background:rgba(227,168,87,0.08); }
+.plan-card h3{ font-size:1rem; margin-bottom:6px; }
+.plan-card .amt{ font-family:'Fraunces',serif; font-size:1.7rem; font-weight:600; }
+.plan-card .amt span{ font-family:'Inter'; font-size:0.8rem; color:var(--muted); font-weight:400; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="logo">
+    <svg width="26" height="26" viewBox="0 0 30 30" fill="none"><path d="M15 2C15 2 8 9 8 16C8 20.4183 11.134 24 15 24C18.866 24 22 20.4183 22 16C22 9 15 2 15 2Z" fill="#E3A857"/><rect x="13.2" y="24" width="3.6" height="4" rx="1.5" fill="#8A6A2E"/></svg>
+    Primilm
+  </div>
+  <div class="progress-wrap">
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="progress-label" id="progressLabel">STEP 1 OF 7</div>
+  </div>
+  <div class="exit">Save &amp; exit</div>
+</div>
+
+<div class="stage">
+
+  <!-- Step 1: Role -->
+  <div class="step active" data-step="1">
+    <span class="eyebrow">Tell us about you</span>
+    <h2 style="margin-top:10px;">What best describes you?</h2>
+    <p class="desc">This shapes the templates and tools your store starts with — you can always change it later.</p>
+    <div class="role-grid">
+      <div class="role-opt" data-role="Teacher"><span class="em">👨‍🏫</span><span class="lbl">Teacher</span></div>
+      <div class="role-opt" data-role="Tutor"><span class="em">🎓</span><span class="lbl">Tutor</span></div>
+      <div class="role-opt" data-role="Coach"><span class="em">🎤</span><span class="lbl">Coach</span></div>
+      <div class="role-opt" data-role="Islamic Scholar"><span class="em">🕌</span><span class="lbl">Islamic Scholar</span></div>
+      <div class="role-opt" data-role="Course Creator"><span class="em">📚</span><span class="lbl">Course Creator</span></div>
+      <div class="role-opt" data-role="Author"><span class="em">✍️</span><span class="lbl">Author</span></div>
+      <div class="role-opt" data-role="Consultant"><span class="em">💼</span><span class="lbl">Consultant</span></div>
+      <div class="role-opt" data-role="Freelancer"><span class="em">💻</span><span class="lbl">Freelancer</span></div>
+      <div class="role-opt" data-role="Designer"><span class="em">🎨</span><span class="lbl">Designer</span></div>
+      <div class="role-opt" data-role="Photographer"><span class="em">📸</span><span class="lbl">Photographer</span></div>
+      <div class="role-opt" data-role="Music Instructor"><span class="em">🎵</span><span class="lbl">Music Instructor</span></div>
+      <div class="role-opt" data-role="Fitness Trainer"><span class="em">❤️</span><span class="lbl">Fitness Trainer</span></div>
+      <div class="role-opt" data-role="Business Mentor"><span class="em">📈</span><span class="lbl">Business Mentor</span></div>
+      <div class="role-opt" data-role="Language Teacher"><span class="em">📖</span><span class="lbl">Language Teacher</span></div>
+      <div class="role-opt" data-role="Other"><span class="em">✨</span><span class="lbl">Other</span></div>
+    </div>
+  </div>
+
+  <!-- Step 2: Business name + logo -->
+  <div class="step" data-step="2">
+    <span class="eyebrow">Your brand</span>
+    <h2 style="margin-top:10px;">What's your store called?</h2>
+    <p class="desc">This is the name customers will see. You can use your own name or a business name.</p>
+    <div class="field">
+      <label>Store / business name</label>
+      <input type="text" id="bizName" placeholder="e.g. Kashif Academy">
+    </div>
+    <div class="field">
+      <label>Logo (optional for now — you can add it anytime)</label>
+      <div style="border:1.5px dashed var(--line); border-radius:12px; padding:26px; text-align:center; color:var(--muted); font-size:0.88rem; cursor:pointer;">
+        📁 Click to upload a logo or photo
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 3: Category confirm -->
+  <div class="step" data-step="3">
+    <span class="eyebrow">Almost there</span>
+    <h2 style="margin-top:10px;">What will you mainly sell?</h2>
+    <p class="desc">Pick a starting focus — your store can offer more than one type later.</p>
+    <div class="role-grid" style="grid-template-columns:repeat(2,1fr);">
+      <div class="role-opt" data-cat="Courses"><span class="em">📚</span><span class="lbl">Courses</span></div>
+      <div class="role-opt" data-cat="Coaching"><span class="em">🗣️</span><span class="lbl">1:1 Coaching / Consultation</span></div>
+      <div class="role-opt" data-cat="Ebooks"><span class="em">📖</span><span class="lbl">eBooks / PDFs</span></div>
+      <div class="role-opt" data-cat="Membership"><span class="em">🔁</span><span class="lbl">Membership / Subscription</span></div>
+      <div class="role-opt" data-cat="Webinar"><span class="em">🎥</span><span class="lbl">Webinars</span></div>
+      <div class="role-opt" data-cat="Templates"><span class="em">🗂️</span><span class="lbl">Templates / Downloads</span></div>
+    </div>
+  </div>
+
+  <!-- Step 4: Payment -->
+  <div class="step" data-step="4">
+    <span class="eyebrow">Get paid directly</span>
+    <h2 style="margin-top:10px;">How do you want to get paid?</h2>
+    <p class="desc">We never touch your money — customers pay you directly through the method you connect.</p>
+
+    <div class="pay-region">Recommended for you</div>
+    <div class="pay-grid">
+      <div class="pay-opt" data-pay="Payoneer"><span class="pem">🅿️</span><div><div class="plbl">Payoneer</div><div class="psub">Best for global payouts</div></div></div>
+      <div class="pay-opt" data-pay="JazzCash"><span class="pem">📱</span><div><div class="plbl">JazzCash</div><div class="psub">Local Pakistan payments</div></div></div>
+      <div class="pay-opt" data-pay="Easypaisa"><span class="pem">💳</span><div><div class="plbl">Easypaisa</div><div class="psub">Local Pakistan payments</div></div></div>
+      <div class="pay-opt" data-pay="Link"><span class="pem">🔗</span><div><div class="plbl">Payment link</div><div class="psub">Paste any existing link</div></div></div>
+    </div>
+
+    <div class="pay-region">Also available</div>
+    <div class="pay-grid">
+      <div class="pay-opt" data-pay="Stripe"><span class="pem">💠</span><div><div class="plbl">Stripe</div><div class="psub">Cards, global</div></div></div>
+      <div class="pay-opt" data-pay="PayPal"><span class="pem">🅱️</span><div><div class="plbl">PayPal</div><div class="psub">Widely recognized</div></div></div>
+      <div class="pay-opt" data-pay="Wise"><span class="pem">🌐</span><div><div class="plbl">Wise</div><div class="psub">Multi-currency</div></div></div>
+      <div class="pay-opt" data-pay="Razorpay"><span class="pem">🇮🇳</span><div><div class="plbl">Razorpay</div><div class="psub">India</div></div></div>
+    </div>
+  </div>
+
+  <!-- Step 5: Theme -->
+  <div class="step" data-step="5">
+    <span class="eyebrow">Design</span>
+    <h2 style="margin-top:10px;">Choose a look for your store</h2>
+    <p class="desc">You can switch themes anytime — this just sets your starting point.</p>
+    <div class="theme-grid">
+      <div class="theme-opt t-modern" data-theme="Modern">
+        <div class="theme-preview"><div class="bar"></div><div class="line"></div><div class="line" style="width:50%"></div></div>
+        <div class="theme-name">Modern</div>
+      </div>
+      <div class="theme-opt t-elegant" data-theme="Elegant">
+        <div class="theme-preview"><div class="bar"></div><div class="line"></div><div class="line" style="width:50%"></div></div>
+        <div class="theme-name">Elegant</div>
+      </div>
+      <div class="theme-opt t-minimal" data-theme="Minimal">
+        <div class="theme-preview"><div class="bar"></div><div class="line"></div><div class="line" style="width:50%"></div></div>
+        <div class="theme-name">Minimal</div>
+      </div>
+      <div class="theme-opt t-professional" data-theme="Professional">
+        <div class="theme-preview"><div class="bar"></div><div class="line"></div><div class="line" style="width:50%"></div></div>
+        <div class="theme-name">Professional</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 6: URL -->
+  <div class="step" data-step="6">
+    <span class="eyebrow">Almost done</span>
+    <h2 style="margin-top:10px;">Choose your store URL</h2>
+    <p class="desc">This is the link you'll share with your audience.</p>
+    <div class="url-box">
+      <span class="url-prefix">primilm.com/</span>
+      <input type="text" id="urlInput" placeholder="yourname">
+    </div>
+    <div class="url-status" id="urlStatus"></div>
+  </div>
+
+  <!-- Step 7: Publish -->
+  <div class="step" data-step="7">
+    <span class="eyebrow">Your store is built 🎉</span>
+    <h2 style="margin-top:10px;">Ready to go live?</h2>
+    <p class="desc">Your store is saved and ready — publishing makes it public so customers can start buying.</p>
+
+    <div class="publish-card">
+      <div style="color:var(--muted); font-size:0.85rem;">YOUR STORE</div>
+      <div id="finalName" style="font-family:'Fraunces',serif; font-size:1.4rem; font-weight:600; margin-top:6px;">Your Store</div>
+      <div class="storeurl" id="finalUrl">primilm.com/yourname</div>
+    </div>
+
+    <div class="price-toggle">
+      <div class="plan-card" data-plan="Starter">
+        <h3>Starter</h3>
+        <div class="amt">$5<span>/mo</span></div>
+      </div>
+      <div class="plan-card" data-plan="Professional">
+        <h3>Professional</h3>
+        <div class="amt">$10<span>/mo</span></div>
+      </div>
+    </div>
+
+    <button class="btn btn-gold" style="width:100%;" id="publishBtn" disabled>Select a plan to publish</button>
+    <p style="text-align:center; margin-top:14px; font-size:0.8rem; color:var(--muted);">You can keep building for free without publishing.</p>
+  </div>
+
+</div>
+
+<div class="stage" style="padding-top:0;">
+  <div class="stage-nav">
+    <button class="btn btn-ghost" id="backBtn">Back</button>
+    <button class="btn btn-gold" id="nextBtn" disabled>Continue</button>
+  </div>
+</div>
+
+<script>
+const totalSteps = 7;
+let current = 1;
+const state = { role:null, name:'', category:null, payment:null, theme:null, url:'', plan:null };
+
+function updateProgress(){
+  document.getElementById('progressFill').style.width = (current/totalSteps*100)+'%';
+  document.getElementById('progressLabel').textContent = `STEP ${current} OF ${totalSteps}`;
+}
+
+function showStep(n){
+  document.querySelectorAll('.step').forEach(s => s.classList.toggle('active', +s.dataset.step === n));
+  document.getElementById('backBtn').style.visibility = n === 1 ? 'hidden' : 'visible';
+  document.getElementById('nextBtn').style.display = n === totalSteps ? 'none' : 'inline-flex';
+  validateStep();
+  updateProgress();
+}
+
+function validateStep(){
+  const nextBtn = document.getElementById('nextBtn');
+  let ok = false;
+  if(current===1) ok = !!state.role;
+  if(current===2) ok = state.name.trim().length > 1;
+  if(current===3) ok = !!state.category;
+  if(current===4) ok = !!state.payment;
+  if(current===5) ok = !!state.theme;
+  if(current===6) ok = state.url.trim().length > 2;
+  nextBtn.disabled = !ok;
+}
+
+// Role select
+document.querySelectorAll('[data-role]').forEach(el => el.addEventListener('click', () => {
+  document.querySelectorAll('[data-role]').forEach(e => e.classList.remove('sel'));
+  el.classList.add('sel'); state.role = el.dataset.role; validateStep();
+}));
+// Category
+document.querySelectorAll('[data-cat]').forEach(el => el.addEventListener('click', () => {
+  document.querySelectorAll('[data-cat]').forEach(e => e.classList.remove('sel'));
+  el.classList.add('sel'); state.category = el.dataset.cat; validateStep();
+}));
+// Payment
+document.querySelectorAll('[data-pay]').forEach(el => el.addEventListener('click', () => {
+  document.querySelectorAll('[data-pay]').forEach(e => e.classList.remove('sel'));
+  el.classList.add('sel'); state.payment = el.dataset.pay; validateStep();
+}));
+// Theme
+document.querySelectorAll('[data-theme]').forEach(el => el.addEventListener('click', () => {
+  document.querySelectorAll('[data-theme]').forEach(e => e.classList.remove('sel'));
+  el.classList.add('sel'); state.theme = el.dataset.theme; validateStep();
+}));
+// Plan
+document.querySelectorAll('[data-plan]').forEach(el => el.addEventListener('click', () => {
+  document.querySelectorAll('[data-plan]').forEach(e => e.classList.remove('sel'));
+  el.classList.add('sel'); state.plan = el.dataset.plan;
+  document.getElementById('publishBtn').disabled = false;
+  document.getElementById('publishBtn').textContent = `Publish on ${state.plan} — Subscribe`;
+}));
+
+// Name input
+document.getElementById('bizName').addEventListener('input', (e) => {
+  state.name = e.target.value; validateStep();
+});
+
+// URL input with fake availability check
+const takenUrls = ['ahmed','coach','academy','store','test'];
+document.getElementById('urlInput').addEventListener('input', (e) => {
+  const val = e.target.value.toLowerCase().replace(/[^a-z0-9-]/g,'');
+  e.target.value = val;
+  state.url = val;
+  const statusEl = document.getElementById('urlStatus');
+  if(val.length < 3){ statusEl.textContent=''; statusEl.className='url-status'; validateStep(); return; }
+  if(takenUrls.includes(val)){
+    statusEl.textContent = '✕ primilm.com/'+val+' is already taken';
+    statusEl.className = 'url-status bad';
+  } else {
+    statusEl.textContent = '✓ primilm.com/'+val+' is available';
+    statusEl.className = 'url-status ok';
+  }
+  validateStep();
+});
+
+document.getElementById('nextBtn').addEventListener('click', () => {
+  if(current === 6){
+    document.getElementById('finalName').textContent = state.name || 'Your Store';
+    document.getElementById('finalUrl').textContent = 'primilm.com/' + state.url;
+  }
+  current = Math.min(totalSteps, current+1);
+  showStep(current);
+});
+document.getElementById('backBtn').addEventListener('click', () => {
+  current = Math.max(1, current-1);
+  showStep(current);
+});
+document.getElementById('publishBtn').addEventListener('click', () => {
+  alert('This would open checkout for the ' + state.plan + ' plan, then publish ' + document.getElementById('finalUrl').textContent);
+});
+
+showStep(1);
+</script>
+
+</body>
+</html>

@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Primilm — Turn what you know into a business</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap');
+
+:root{
+  --ink: #11142A;
+  --ink-2: #1B1F3C;
+  --ink-3: #262B52;
+  --gold: #E3A857;
+  --gold-soft: #F2C98A;
+  --paper: #F6F1E7;
+  --paper-dim: #D8D3E0;
+  --muted: #8C90B8;
+  --line: rgba(227,168,87,0.18);
+  --radius: 14px;
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+html{scroll-behavior:smooth;}
+body{
+  background: var(--ink);
+  color: var(--paper);
+  font-family: 'Inter', sans-serif;
+  line-height: 1.5;
+  overflow-x:hidden;
+}
+h1,h2,h3{ font-family:'Fraunces', serif; font-weight:600; letter-spacing:-0.01em; }
+.eyebrow{
+  font-family:'IBM Plex Mono', monospace;
+  font-size:0.72rem;
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+  color: var(--gold);
+}
+a{color:inherit; text-decoration:none;}
+.wrap{max-width:1180px; margin:0 auto; padding:0 32px;}
+
+/* NAV */
+nav{
+  position:sticky; top:0; z-index:50;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:22px 32px;
+  background: rgba(17,20,42,0.85);
+  backdrop-filter: blur(10px);
+  border-bottom:1px solid var(--line);
+}
+.logo{ font-family:'Fraunces', serif; font-weight:600; font-size:1.35rem; display:flex; align-items:center; gap:8px;}
+.logo .dot{ width:7px; height:7px; border-radius:50%; background:var(--gold); box-shadow:0 0 10px var(--gold);}
+.nav-links{ display:flex; gap:36px; font-size:0.92rem; color:var(--paper-dim);}
+.nav-links a:hover{ color:var(--gold-soft); }
+.btn{
+  display:inline-flex; align-items:center; gap:8px;
+  padding:12px 22px; border-radius:999px;
+  font-size:0.92rem; font-weight:600;
+  cursor:pointer; border:1px solid transparent;
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+.btn:hover{ transform: translateY(-1px); }
+.btn-gold{ background: linear-gradient(180deg,var(--gold-soft),var(--gold)); color:#1B1200; }
+.btn-gold:hover{ box-shadow: 0 8px 24px rgba(227,168,87,0.35); }
+.btn-ghost{ border-color: var(--line); color:var(--paper); }
+.btn-ghost:hover{ border-color: var(--gold); }
+@media(max-width:800px){ .nav-links{display:none;} }
+
+/* HERO */
+.hero{
+  padding:100px 32px 80px;
+  display:grid; grid-template-columns: 1.1fr 0.9fr; gap:60px; align-items:center;
+  position:relative;
+}
+.hero::before{
+  content:''; position:absolute; top:-120px; left:50%; transform:translateX(-60%);
+  width:600px; height:600px; border-radius:50%;
+  background: radial-gradient(circle, rgba(227,168,87,0.14), transparent 65%);
+  pointer-events:none;
+}
+.hero h1{ font-size:3.4rem; line-height:1.06; margin:18px 0 20px; max-width:620px;}
+.hero h1 em{ font-style:normal; color:var(--gold-soft); }
+.hero p.sub{ color:var(--paper-dim); font-size:1.12rem; max-width:520px; margin-bottom:34px; }
+.hero-ctas{ display:flex; gap:14px; align-items:center; flex-wrap:wrap; }
+.hero-note{ margin-top:16px; font-size:0.85rem; color:var(--muted); }
+
+/* Storefront preview device */
+.device{
+  background: var(--ink-2);
+  border:1px solid var(--line);
+  border-radius: 20px;
+  padding:18px;
+  box-shadow: 0 30px 60px rgba(0,0,0,0.45);
+}
+.device-bar{ display:flex; gap:6px; margin-bottom:14px; padding:0 4px;}
+.device-bar span{ width:9px; height:9px; border-radius:50%; background:var(--ink-3); }
+.device-screen{
+  background: var(--paper);
+  color:#1B1200;
+  border-radius:12px;
+  padding:26px 22px;
+  min-height:360px;
+  position:relative;
+  overflow:hidden;
+}
+.store-avatar{
+  width:56px; height:56px; border-radius:50%;
+  background: linear-gradient(145deg,var(--gold-soft),var(--gold));
+  display:flex; align-items:center; justify-content:center;
+  font-size:1.6rem; margin-bottom:14px;
+}
+.store-name{ font-family:'Fraunces',serif; font-weight:600; font-size:1.25rem; }
+.store-role{ font-family:'IBM Plex Mono',monospace; font-size:0.72rem; letter-spacing:0.08em; text-transform:uppercase; color:#8A6A2E; margin-bottom:18px; }
+.store-product{
+  display:flex; align-items:center; justify-content:space-between;
+  background:#fff; border:1px solid #E9E1D0; border-radius:10px;
+  padding:12px 14px; margin-bottom:10px; font-size:0.88rem;
+}
+.store-price{ font-weight:700; color:#1B1200; }
+.store-btn{
+  margin-top:14px; text-align:center; padding:12px;
+  background:#1B142A; color:#F6F1E7; border-radius:10px; font-weight:600; font-size:0.9rem;
+}
+.device-caption{ text-align:center; margin-top:14px; font-size:0.82rem; color:var(--muted); }
+
+@media(max-width:900px){
+  .hero{ grid-template-columns:1fr; padding-top:60px;}
+  .hero h1{ font-size:2.3rem; }
+}
+
+/* SECTION shared */
+section{ padding:90px 32px; }
+.section-head{ max-width:600px; margin-bottom:56px; }
+.section-head h2{ font-size:2.1rem; margin-top:12px; }
+.section-head p{ color:var(--paper-dim); margin-top:14px; font-size:1.05rem; }
+
+/* Who it's for grid */
+.roles-grid{
+  display:grid; grid-template-columns:repeat(4,1fr); gap:14px;
+}
+.role-card{
+  background: var(--ink-2); border:1px solid var(--line); border-radius:12px;
+  padding:20px 16px; text-align:left;
+  transition: border-color .15s ease, transform .15s ease;
+}
+.role-card:hover{ border-color:var(--gold); transform: translateY(-3px); }
+.role-emoji{ font-size:1.5rem; margin-bottom:10px; display:block;}
+.role-name{ font-size:0.92rem; font-weight:600; }
+@media(max-width:900px){ .roles-grid{ grid-template-columns:repeat(2,1fr);} }
+
+/* How it works */
+.steps{ display:grid; grid-template-columns:repeat(3,1fr); gap:28px; }
+.step{
+  background: var(--ink-2); border:1px solid var(--line); border-radius:var(--radius);
+  padding:32px 26px; position:relative;
+}
+.step .num{
+  font-family:'IBM Plex Mono',monospace; color:var(--gold); font-size:0.8rem;
+  border:1px solid var(--line); width:32px; height:32px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center; margin-bottom:18px;
+}
+.step h3{ font-size:1.2rem; margin-bottom:10px; }
+.step p{ color:var(--paper-dim); font-size:0.95rem; }
+@media(max-width:900px){ .steps{ grid-template-columns:1fr; } }
+
+/* Pricing */
+.price-grid{ display:grid; grid-template-columns:repeat(2,1fr); gap:24px; max-width:760px; }
+.price-card{
+  background: var(--ink-2); border:1px solid var(--line); border-radius:var(--radius);
+  padding:34px 28px;
+}
+.price-card.featured{ border-color:var(--gold); box-shadow:0 0 0 1px var(--gold) inset; }
+.price-card h3{ font-size:1.1rem; margin-bottom:6px; }
+.price-amt{ font-family:'Fraunces',serif; font-size:2.6rem; font-weight:600; margin:12px 0 6px; }
+.price-amt span{ font-family:'Inter',sans-serif; font-size:0.95rem; color:var(--muted); font-weight:400;}
+.price-list{ list-style:none; margin:22px 0 26px; }
+.price-list li{ font-size:0.9rem; color:var(--paper-dim); padding:7px 0; border-top:1px solid var(--line); }
+.price-list li:first-child{ border-top:none; }
+@media(max-width:700px){ .price-grid{ grid-template-columns:1fr; } }
+
+/* CTA footer */
+.cta-final{
+  text-align:center; padding:100px 32px;
+  background: radial-gradient(ellipse at center, rgba(227,168,87,0.10), transparent 70%);
+}
+.cta-final h2{ font-size:2.3rem; max-width:640px; margin:0 auto 22px; }
+footer{
+  border-top:1px solid var(--line); padding:36px 32px; text-align:center;
+  color:var(--muted); font-size:0.85rem;
+}
+
+[data-reveal]{ opacity:0; transform: translateY(18px); transition: opacity .6s ease, transform .6s ease; }
+[data-reveal].in{ opacity:1; transform:none; }
+@media (prefers-reduced-motion: reduce){
+  [data-reveal]{ opacity:1; transform:none; transition:none; }
+  html{ scroll-behavior:auto; }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo"><span class="dot"></span>Primilm</div>
+  <div class="nav-links">
+    <a href="#who">Who it's for</a>
+    <a href="#how">How it works</a>
+    <a href="#pricing">Pricing</a>
+  </div>
+  <a href="#" class="btn btn-gold" onclick="return false;">Start free</a>
+</nav>
+
+<section class="hero">
+  <div>
+    <span class="eyebrow">A storefront for people who teach, coach & share knowledge</span>
+    <h1>Turn what you know<br>into <em>a business.</em></h1>
+    <p class="sub">Build a store for your courses, coaching, books, or consultations — free. Publish when you're ready, then get paid directly to your own Payoneer, JazzCash, Stripe, or bank account. We never touch your money.</p>
+    <div class="hero-ctas">
+      <a href="#" class="btn btn-gold" onclick="return false;">Build your store — free</a>
+      <a href="#how" class="btn btn-ghost">See how it works</a>
+    </div>
+    <p class="hero-note">No card required to start. Pay only when you publish.</p>
+  </div>
+
+  <div class="device" id="device">
+    <div class="device-bar"><span></span><span></span><span></span></div>
+    <div class="device-screen">
+      <div class="store-avatar" id="d-emoji">🧕</div>
+      <div class="store-name" id="d-name">Ayesha Qureshi</div>
+      <div class="store-role" id="d-role">Islamic Scholar</div>
+      <div id="d-products"></div>
+      <div class="store-btn">View store</div>
+    </div>
+    <p class="device-caption">One platform. Every kind of expert.</p>
+  </div>
+</section>
+
+<section id="who">
+  <div class="wrap">
+    <div class="section-head" data-reveal>
+      <span class="eyebrow">Who it's for</span>
+      <h2>Built for anyone who sells what they know</h2>
+      <p>Every account gets the same powerful tools, with templates tuned to how you actually work.</p>
+    </div>
+    <div class="roles-grid">
+      <div class="role-card" data-reveal><span class="role-emoji">👨‍🏫</span><div class="role-name">Teacher</div></div>
+      <div class="role-card" data-reveal><span class="role-emoji">🎓</span><div class="role-name">Tutor</div></div>
+      <div class="role-card" data-reveal><span class="role-emoji">🎤</span><div class="role-name">Coach</div></div>
+      <div class="role-card" data-reveal><span class="role-emoji">🕌</span><div class="role-name">Islamic Scholar</div></div>
+      <div class="role-card" data-reveal><span class="role-emoji">📚</span><div class="role-name">Course Creator</div></div>
+      <div class="role-card" data-reveal><span class="role-emoji">✍️</span><div class="role-name">Author</div></div>
+      <div class="role-card" data-reveal><span class="role-emoji">💼</span><div class="role-name">Consultant</div></div>
+      <div class="role-card" data-reveal><span class="role-emoji">💻</span><div class="role-name">Freelancer</div></div>
+      <div class="role-card" data-reveal><span class="role-emoji">🎨</span><div class="role-name">Designer</div></div>
+      <div class="role-card" data-reveal><span class="role-emoji">📸</span><div class="role-name">Photographer</div></div>
+      <div class="role-card" data-reveal><span class="role-emoji">🎵</span><div class="role-name">Music Instructor</div></div>
+      <div class="role-card" data-reveal><span class="role-emoji">📈</span><div class="role-name">Business Mentor</div></div>
+    </div>
+  </div>
+</section>
+
+<section id="how">
+  <div class="wrap">
+    <div class="section-head" data-reveal>
+      <span class="eyebrow">How it works</span>
+      <h2>Build free. Publish when ready. Get paid directly.</h2>
+      <p>We designed this so you risk nothing before you're confident it works for you.</p>
+    </div>
+    <div class="steps">
+      <div class="step" data-reveal>
+        <div class="num">01</div>
+        <h3>Build your store — free</h3>
+        <p>Pick your category, add your products or services, choose a theme, and set your store URL. No payment needed to start.</p>
+      </div>
+      <div class="step" data-reveal>
+        <div class="num">02</div>
+        <h3>Publish on a plan that fits</h3>
+        <p>When your store is ready, subscribe from $5/month to make it public and start accepting customers.</p>
+      </div>
+      <div class="step" data-reveal>
+        <div class="num">03</div>
+        <h3>Get paid directly</h3>
+        <p>Connect Payoneer, Stripe, JazzCash, PayPal, or your bank. Customers pay you — we never hold your money.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="pricing">
+  <div class="wrap">
+    <div class="section-head" data-reveal>
+      <span class="eyebrow">Pricing</span>
+      <h2>One flat subscription. Nothing taken from your sales.</h2>
+      <p>No transaction fees. No revenue share. You keep 100% of what you earn.</p>
+    </div>
+    <div class="price-grid">
+      <div class="price-card" data-reveal>
+        <h3>Starter</h3>
+        <div class="price-amt">$5<span>/month</span></div>
+        <ul class="price-list">
+          <li>1 published store</li>
+          <li>Unlimited products</li>
+          <li>Direct payment connections</li>
+          <li>Basic analytics</li>
+        </ul>
+        <a href="#" class="btn btn-ghost" style="width:100%;justify-content:center;" onclick="return false;">Start free</a>
+      </div>
+      <div class="price-card featured" data-reveal>
+        <h3>Professional</h3>
+        <div class="price-amt">$10<span>/month</span></div>
+        <ul class="price-list">
+          <li>Everything in Starter</li>
+          <li>Bookings & calendar</li>
+          <li>Email marketing tools</li>
+          <li>Advanced analytics</li>
+        </ul>
+        <a href="#" class="btn btn-gold" style="width:100%;justify-content:center;" onclick="return false;">Start free</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="cta-final" data-reveal>
+  <span class="eyebrow">Ready when you are</span>
+  <h2>Your knowledge is worth more than a WhatsApp status.</h2>
+  <a href="#" class="btn btn-gold" onclick="return false;">Build your store — free</a>
+</section>
+
+<footer>
+  © 2026 Primilm. Built for teachers, coaches, scholars, and creators everywhere.
+</footer>
+
+<script>
+// Rotating storefront preview
+const profiles = [
+  {emoji:'🕌', name:'Ayesha Qureshi', role:'Islamic Scholar', products:[['Tafseer Course — 12 lessons','$40'],['1:1 Quran Coaching','$25/session']]},
+  {emoji:'👨‍🏫', name:'David Okafor', role:'Teacher', products:[['English Grammar Mastery','$29'],['Marked Homework Review','$12']]},
+  {emoji:'🎤', name:'Lina Torres', role:'Coach', products:[['12-Week Confidence Program','$149'],['Discovery Call','Free']]},
+  {emoji:'✍️', name:'Ahmed Bashir', role:'Author', products:[['The Quiet Reader — eBook','$9'],['Signed Print Edition','$22']]},
+  {emoji:'📈', name:'Priya Nair', role:'Business Mentor', products:[['Startup Strategy Session','$60'],['Growth Playbook PDF','$18']]},
+];
+let idx = 0;
+const elEmoji = document.getElementById('d-emoji');
+const elName = document.getElementById('d-name');
+const elRole = document.getElementById('d-role');
+const elProducts = document.getElementById('d-products');
+
+function renderProfile(p){
+  elEmoji.textContent = p.emoji;
+  elName.textContent = p.name;
+  elRole.textContent = p.role;
+  elProducts.innerHTML = p.products.map(([n,pr]) =>
+    `<div class="store-product"><span>${n}</span><span class="store-price">${pr}</span></div>`
+  ).join('');
+}
+renderProfile(profiles[0]);
+
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+if(!reduceMotion){
+  setInterval(() => {
+    idx = (idx + 1) % profiles.length;
+    const screen = document.querySelector('.device-screen');
+    screen.style.transition = 'opacity .25s ease';
+    screen.style.opacity = 0;
+    setTimeout(() => {
+      renderProfile(profiles[idx]);
+      screen.style.opacity = 1;
+    }, 250);
+  }, 3200);
+}
+
+// Scroll reveal
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('in'); });
+}, {threshold:0.15});
+document.querySelectorAll('[data-reveal]').forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>
