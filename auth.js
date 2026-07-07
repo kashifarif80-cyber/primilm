@@ -1,5 +1,5 @@
 // ============================================================
-// PRIMILM — Auth module
+// primilm-backend/auth.js
 // Three separate identity flows: Creator, Buyer, Admin
 // ============================================================
 import { auth, db } from "./firebase-config.js";
